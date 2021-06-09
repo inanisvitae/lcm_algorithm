@@ -43,10 +43,18 @@ class Lcm():
         print(self.getTransactionsFromNd(nd))
         self.transactions = self.populate_from_file()
         self.flippedTransactions = self.getTransactionsFromNd(nd)
+        print('=====transaction and flipped transactions====')
+        print(self.transactions)
+        print(self.flippedTransactions)
+        self.result = []
         self.minSup = minSup
         self.backtrackingLCM(None, self.flippedTransactions, allItems, -1) # nd isn't a list
 
-        return nd
+
+        for i in range(len(self.result)):
+            self.result[i] = list(set(self.result[i]))
+        self.result.sort(key=len, reverse=True)
+        return self.result
 
     def backtrackingLCM(self, p:list, transactionsOfP:dict, frequentItems:list, tailPosInP:int):
         # ========  for each frequent item  e  =============
@@ -74,9 +82,9 @@ class Lcm():
                 itemset.sort()
 
                 # finish here
-                print('Closed Item Set is: ')
-                print(itemset)
-
+                # print('Closed Item Set is: ')
+                # print(itemset)
+                self.result.append(itemset)
                 # Performs database reduction
                 self.anyTimeDatabaseReductionClosed(transactionsPe, j, frequentItems, p, e)
 
@@ -124,6 +132,7 @@ class Lcm():
 
     def intersectTransactions(self, transactionsOfP, e):
         transactionsPe = []
+
         for i in transactionsOfP:
             if e in self.flippedTransactions[i]:
                 transactionsPe.append(i)
